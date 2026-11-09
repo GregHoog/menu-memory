@@ -28,8 +28,8 @@ export default async (req) => {
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
+      authorization: `Bearer ${apiKey}`,
+      "anthropic-version": "2026-10-21",
       "content-type": "application/json",
     },
     body: JSON.stringify({
@@ -53,7 +53,7 @@ export default async (req) => {
     if (r.status === 401) {
       // Shape only, never the key itself, so a wrong paste is easy to spot.
       const shape = `${apiKey.slice(0, 7)}… (${apiKey.length} characters)`;
-      msg = `Anthropic rejected the API key. The server has a key starting ${shape}. A valid key starts "sk-ant-api" and is about 100+ characters.`;
+      msg = `Anthropic rejected the API key. The server has a key starting ${shape}. Keys from the Anthropic Console start "sk-ant-". Check it is the whole key, pasted once, with nothing else in the field.`;
     }
     return json(502, { error: msg });
   }
