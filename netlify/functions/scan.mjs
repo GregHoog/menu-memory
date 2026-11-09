@@ -13,7 +13,9 @@ export default async (req) => {
 
   const pass = process.env.APP_PASSWORD;
   if (pass && req.headers.get("x-app-key") !== pass) return json(401, { error: "Wrong passphrase" });
-  if (!process.env.ANTHROPIC_API_KEY) return json(500, { error: "ANTHROPIC_API_KEY not set on server" });
+  // Pasted keys often carry spaces, newlines or quotes; strip them.
+  const apiKey = (process.env.ANTHROPIC_API_KEY || "").trim().replace(/^["']|["']$/g, "").trim();
+  if (!apiKey) return json(500, { error: "ANTHROPIC_API_KEY not set on server" });
 
   let image;
   try {
@@ -26,7 +28,7 @@ export default async (req) => {
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
-      "x-api-key": process.env.ANTHROPIC_API_KEY,
+      "x-api-key": apiKey,
       "anthropic-version": "2023-06-01",
       "content-type": "application/json",
     },
@@ -46,7 +48,15 @@ export default async (req) => {
   });
 
   const data = await r.json();
-  if (!r.ok) return json(502, { error: data?.error?.message || "Claude API error" });
+  if (!r.ok) {
+    let msg = data?.error?.message || "Claude API error";
+    if (r.status === 401) {
+      // Shape only, never the key itself, so a wrong paste is easy to spot.
+      const shape = `${apiKey.slice(0, 7)}… (${apiKey.length} characters)`;
+      msg = `Anthropic rejected the API key. The server has a key starting ${shape}. A valid key starts "sk-ant-api" and is about 100+ characters.`;
+    }
+    return json(502, { error: msg });
+  }
 
   const text = data.content?.map((c) => c.text || "").join("") || "";
   const match = text.match(/\{[\s\S]*\}/);
