@@ -10,142 +10,210 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Menu Memory">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#c2410c">
+<meta name="theme-color" content="#f7f8f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121a16" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap">
 <style>
-:root{--bg:#fffaf5;--card:#fff;--ink:#1c1917;--mute:#78716c;--line:#e7e0d8;--accent:#c2410c;--star:#f59e0b;--good:#15803d;--bad:#b91c1c}
-@media (prefers-color-scheme:dark){:root{--bg:#1a1613;--card:#26201c;--ink:#f5efe9;--mute:#a8a098;--line:#3a322c;--accent:#fb923c;--good:#4ade80;--bad:#f87171}}
+:root{
+  --bg:#f7f8f5; --card:#ffffff; --ink:#15201a; --mute:#66756c; --line:#e1e6e0;
+  --brand:#1f5c45; --brand-ink:#ffffff; --star:#e8a317; --good:#1d7a4a; --bad:#b4372c;
+  --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#121a16; --card:#1a2420; --ink:#eaf2ed; --mute:#92a399; --line:#2a3731;
+  --brand:#5fc79a; --brand-ink:#0b1712; --star:#f2b632; --good:#5fd196; --bad:#f08a7e; color-scheme:dark}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,system-ui,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
-header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;display:flex;align-items:center;gap:10px}
-header h1{font-size:20px;margin:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-main{padding:12px 16px 90px;max-width:640px;margin:0 auto}
-button,.btn{font:inherit;border:0;border-radius:12px;padding:10px 16px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
-button.ghost{background:transparent;color:var(--accent);padding:8px}
-button.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-button.danger{background:transparent;color:var(--bad)}
-button:disabled{opacity:.5}
-input,textarea,select{font:inherit;width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
-textarea{min-height:80px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 var(--body)}
+main{max-width:640px;margin:0 auto;padding:0 0 calc(110px + env(safe-area-inset-bottom))}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;gap:8px;padding:calc(env(safe-area-inset-top) + 10px) 18px 10px}
+.top h1{font:700 26px/1.1 var(--display);margin:0;flex:1;min-width:0;text-wrap:balance}
+.back{all:unset;cursor:pointer;color:var(--brand);font-weight:600;font-size:15px;padding:6px 4px}
+.pad{padding:0 18px}
+button{font:inherit}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;background:var(--brand);color:var(--brand-ink);font-weight:600;padding:13px 18px;border-radius:14px;text-align:center;font-size:15px}
+.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:transparent;color:var(--bad)}
+.btn.block{display:block;width:100%}
+.btn[disabled]{opacity:.5;cursor:default}
+.btn:focus-visible,.back:focus-visible,.chip:focus-visible,.dish:focus-visible,.rcard:focus-visible,.tabs button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+input,textarea{font:inherit;font-size:16px;width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+textarea{min-height:70px;resize:none}
+label,.lbl{display:block;font-size:12px;font-weight:600;color:var(--mute);margin:14px 0 6px;letter-spacing:.04em;text-transform:uppercase}
 .row{display:flex;align-items:center;gap:10px}
 .grow{flex:1;min-width:0}
-.mute{color:var(--mute);font-size:14px}
-.stars{color:var(--star);letter-spacing:1px;white-space:nowrap}
+.meta{color:var(--mute);font-size:13px}
+.stars{color:var(--star);letter-spacing:1px;white-space:nowrap;font-size:15px}
 .stars .off{color:var(--line)}
-.fab{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom) + 16px);box-shadow:0 4px 14px #0004;border-radius:28px;padding:14px 20px;z-index:6}
-h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:20px 0 8px}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px}
-.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 14px;border-radius:20px;white-space:nowrap;font-weight:500}
-.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-.dish{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
-.dish:last-child{border:0}
-.price{color:var(--mute);font-variant-numeric:tabular-nums}
-.sheet{position:fixed;inset:0;background:#0008;z-index:20;display:flex;align-items:flex-end}
-.sheet>div{background:var(--bg);width:100%;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);max-width:640px;margin:0 auto}
-.bigstars{display:flex;justify-content:space-between;font-size:44px;margin:8px 0 14px}
-.bigstars span{cursor:pointer;color:var(--line);padding:0 4px}
-.bigstars span.on{color:var(--star)}
-.tag{font-size:12px;padding:2px 8px;border-radius:10px;background:var(--line)}
-.empty{text-align:center;color:var(--mute);padding:50px 20px}
-.err{color:var(--bad);margin:8px 0}
-label{display:block;font-size:14px;color:var(--mute);margin:12px 0 4px}
+.rcard{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:10px;cursor:pointer;color:inherit}
+.rcard b{font:700 18px/1.2 var(--display)}
+.bar{height:5px;border-radius:3px;background:var(--line);margin-top:10px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--brand);border-radius:3px}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:9px;background:var(--line);color:var(--ink);margin-right:4px}
+.tag.good{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.tag.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 18px 12px;scrollbar-width:none}
+.chip{all:unset;cursor:pointer;white-space:nowrap;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:6px 13px;font-size:13px;font-weight:500}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sec-h{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600;margin:16px 0 6px}
+.list{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0 14px}
+.dish{display:flex;gap:10px;padding:12px 0;border:0;border-bottom:1px solid var(--line);cursor:pointer;width:100%;text-align:left;color:inherit;background:none}
+.dish:last-child{border-bottom:0}
+.dish b{font-weight:600;font-size:15px}
+.price{color:var(--mute);font-variant-numeric:tabular-nums;font-size:14px}
+.found{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:14px;border-bottom:1px solid var(--line)}
+.found:last-child{border:0}
+.x{all:unset;cursor:pointer;color:var(--mute);padding:4px 8px;font-size:16px}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .thumbs img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.err{color:var(--bad);margin:10px 0;font-size:14px}
+.empty{text-align:center;color:var(--mute);padding:50px 20px;font-size:15px}
+.fab{position:fixed;right:16px;bottom:calc(86px + env(safe-area-inset-bottom));box-shadow:0 8px 20px #0004;border-radius:28px;padding:14px 20px;z-index:6}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:center;background:var(--bg);border-top:1px solid var(--line);padding:6px 8px calc(10px + env(safe-area-inset-bottom))}
+.tabs>div{display:flex;width:100%;max-width:640px}
+.tabs button{all:unset;cursor:pointer;flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--mute);padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:10px}
+.tabs button.on{color:var(--brand)}
+.tabs svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sheet{position:fixed;inset:0;background:#0007;z-index:20;display:flex;align-items:flex-end}
+.sheet>div{width:100%;max-width:640px;margin:0 auto;background:var(--bg);border-radius:24px 24px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom));max-height:92dvh;overflow-y:auto}
+.sheet h4{font:700 22px/1.15 var(--display);margin:0 0 4px}
+.big{display:flex;justify-content:space-between;margin:12px 0 6px}
+.big button{all:unset;cursor:pointer;font-size:46px;line-height:1;color:color-mix(in srgb,var(--mute) 35%,var(--line));padding:0 4px}
+.big button.on{color:var(--star)}
+.center{text-align:center}
 </style>
 </head>
 <body>
-<header id="hdr"></header>
-<main id="main"></main>
+<div id="app"></div>
 <div id="sheet"></div>
 
 <script>
 // ---------- storage ----------
 const KEY = "menumemory.v1";
 let db = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {restaurants: []}; } catch { return {restaurants: []}; } })();
-const save = () => localStorage.setItem(KEY, JSON.stringify(db));
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch { alert("Couldn't save. Storage may be full or blocked."); } };
 const uid = () => Math.random().toString(36).slice(2, 10);
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const stars = (n) => n ? `<span class="stars">${"★".repeat(n)}<span class="off">${"★".repeat(5 - n)}</span></span>` : `<span class="mute">not rated</span>`;
+const stars = (n) => n ? `<span class="stars">${"★".repeat(n)}<span class="off">${"★".repeat(5 - n)}</span></span>` : `<span class="meta">Not rated</span>`;
+const dateStr = (t) => new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"});
+const QUICK = ["Order again", "Share-worthy", "Too salty", "Too small", "Skip"];
+const tagClass = (t) => /again|share/i.test(t) ? "good" : "bad";
+
+const ICON = {
+  home: '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
+  best: '<svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+  avoid: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>'
+};
 
 // ---------- state / routing ----------
-let view = {name: "home"};
+let view = {name: "home"};   // home | best | avoid | rest | add | review
 let filter = "all", q = "";
-const go = (v) => { view = v; render(); window.scrollTo(0, 0); };
+let draft = {name: "", sections: [], photos: [], status: "", error: ""};
+const resetDraft = () => draft = {name: "", sections: [], photos: [], status: "", error: ""};
+const go = (v) => { view = v; closeSheet(); render(); window.scrollTo(0, 0); };
 const rest = () => db.restaurants.find((r) => r.id === view.id);
+const allDishes = () => db.restaurants.flatMap((r) => r.sections.flatMap((s) => s.dishes.map((d) => ({d, r}))));
 
 function render() {
-  const h = $("#hdr"), m = $("#main");
-  if (view.name === "home") home(h, m);
-  else if (view.name === "rest") restaurant(h, m);
-  else if (view.name === "add") addMenu(h, m);
+  const app = $("#app");
+  app.innerHTML = {home, best, avoid, rest: restaurant, add: addMenu, review}[view.name]();
+  bind();
 }
 
-// ---------- home ----------
-function home(h, m) {
-  h.innerHTML = `<h1>🍽️ Menu Memory</h1><button class="ghost" onclick="settings()">⚙︎</button>`;
-  const list = db.restaurants.slice().sort((a, b) => b.created - a.created);
+function tabBar() {
+  return `<nav class="tabs"><div>${[["home", "Restaurants"], ["best", "Best dishes"], ["avoid", "Avoid list"]].map(([k, l]) =>
+    `<button class="${view.name === k ? "on" : ""}" onclick="go({name:'${k}'})">${ICON[k]}${l}</button>`).join("")}</div></nav>`;
+}
+
+// ---------- tab screens ----------
+function home() {
   const ql = q.toLowerCase();
-  // search across restaurants and dishes
+  const list = db.restaurants.slice().sort((a, b) => (b.visited || b.created) - (a.visited || a.created));
   const hits = ql ? list.map((r) => ({r, dishes: r.sections.flatMap((s) => s.dishes).filter((d) => d.name.toLowerCase().includes(ql))}))
                       .filter((x) => x.r.name.toLowerCase().includes(ql) || x.dishes.length) : list.map((r) => ({r, dishes: []}));
-  m.innerHTML = `<input id="q" type="search" placeholder="Search restaurants or dishes" value="${esc(q)}">` +
-    (hits.length ? hits.map(({r, dishes}) => {
-      const all = r.sections.flatMap((s) => s.dishes), rated = all.filter((d) => d.rating);
-      return `<div class="card" onclick="go({name:'rest',id:'${r.id}'})">
-        <div class="row"><div class="grow"><b>${esc(r.name)}</b><div class="mute">${rated.length} of ${all.length} dishes rated</div></div><span class="mute">›</span></div>
-        ${dishes.map((d) => `<div class="mute" style="margin-top:6px">${esc(d.name)} ${stars(d.rating)}</div>`).join("")}</div>`;
-    }).join("") : `<div class="empty">${db.restaurants.length ? "No matches." : "No menus yet.<br>Tap “Add menu” to scan your first one."}</div>`) +
-    `<button class="fab" onclick="go({name:'add'})">＋ Add menu</button>`;
-  const qi = $("#q"); qi.oninput = () => { q = qi.value; const pos = qi.selectionStart; home(h, m); const n = $("#q"); n.focus(); n.setSelectionRange(pos, pos); };
+  return `<main><div class="top"><h1>Restaurants</h1><button class="back" aria-label="Backup and settings" onclick="settings()">⚙︎</button></div><div class="pad">
+    <input id="q" type="search" placeholder="Search restaurants or dishes" value="${esc(q)}">
+    ${hits.length ? hits.map(({r, dishes}) => {
+      const all = r.sections.flatMap((s) => s.dishes), rated = all.filter((d) => d.rating), fav = all.filter((d) => d.rating >= 4).length;
+      return `<button class="rcard" onclick="filter='all';go({name:'rest',id:'${r.id}'})">
+        <div class="row"><div class="grow"><b>${esc(r.name)}</b><div class="meta">${r.visited ? "Last visit " + dateStr(r.visited) : "Added " + dateStr(r.created)}</div></div><span class="meta">›</span></div>
+        <div class="row" style="margin-top:10px"><span class="meta grow">${rated.length} of ${all.length} dishes rated</span>${fav ? `<span class="tag good" style="margin:0">${fav} loved</span>` : ""}</div>
+        <div class="bar"><span style="width:${all.length ? rated.length / all.length * 100 : 0}%"></span></div>
+        ${dishes.map((d) => `<div class="meta" style="margin-top:6px">${esc(d.name)} ${stars(d.rating)}</div>`).join("")}</button>`;
+    }).join("") : `<div class="empty">${db.restaurants.length ? "No matches." : "No menus yet.<br>Tap “Add menu” to scan your first one."}</div>`}
+  </div></main><button class="btn fab" onclick="resetDraft();go({name:'add'})">＋ Add menu</button>${tabBar()}`;
+}
+
+function dishRows(items, empty) {
+  return items.length ? `<div class="list">${items.map(({d, r}) =>
+    `<button class="dish" onclick="filter='all';go({name:'rest',id:'${r.id}'})"><div class="grow"><b>${esc(d.name)}</b><div class="meta">${esc(r.name)}</div>${d.note ? `<div class="meta">“${esc(d.note)}”</div>` : ""}</div>${stars(d.rating)}</button>`).join("")}</div>`
+    : `<div class="empty">${empty}</div>`;
+}
+function best() {
+  const l = allDishes().filter((x) => x.d.rating >= 4).sort((a, b) => b.d.rating - a.d.rating);
+  return `<main><div class="top"><h1>Best dishes</h1></div><div class="pad"><p class="meta" style="margin:0 0 6px">Everything you rated 4 or 5, across all restaurants.</p>${dishRows(l, "Rate a dish 4 or 5 stars and it shows up here.")}</div></main>${tabBar()}`;
+}
+function avoid() {
+  const l = allDishes().filter((x) => x.d.rating && x.d.rating <= 2);
+  return `<main><div class="top"><h1>Avoid list</h1></div><div class="pad"><p class="meta" style="margin:0 0 6px">Dishes you rated 1 or 2, so you don't order them again.</p>${dishRows(l, "Nothing here yet.")}</div></main>${tabBar()}`;
 }
 
 // ---------- restaurant ----------
-function restaurant(h, m) {
-  const r = rest(); if (!r) return go({name: "home"});
-  h.innerHTML = `<button class="ghost" onclick="go({name:'home'})">‹ Back</button><h1>${esc(r.name)}</h1><button class="ghost" onclick="restMenu()">•••</button>`;
-  const f = {all: () => true, rated: (d) => d.rating, fav: (d) => d.rating >= 4, avoid: (d) => d.rating && d.rating <= 2, todo: (d) => !d.rating}[filter];
-  const chips = [["all", "All"], ["fav", "Loved ★4-5"], ["avoid", "Avoid ★1-2"], ["rated", "Tried"], ["todo", "Not rated"]];
-  let html = `<div class="chips">${chips.map(([k, l]) => `<button class="chip ${filter === k ? "on" : ""}" onclick="filter='${k}';render()">${l}</button>`).join("")}</div>`;
+function restaurant() {
+  const r = rest(); if (!r) { view = {name: "home"}; return home(); }
+  const f = {all: () => true, fav: (d) => d.rating >= 4, avoid: (d) => d.rating && d.rating <= 2, todo: (d) => !d.rating}[filter];
+  const chips = [["all", "All"], ["fav", "Loved"], ["avoid", "Avoid"], ["todo", "Not rated"]];
   let any = false;
-  r.sections.forEach((s, si) => {
+  const secs = r.sections.map((s, si) => {
     const ds = s.dishes.map((d, di) => ({d, di})).filter(({d}) => f(d));
-    if (!ds.length) return; any = true;
-    html += `<h2>${esc(s.name)}</h2><div class="card" style="padding:0 14px">` + ds.map(({d, di}) => `
-      <div class="dish" onclick="dishSheet(${si},${di})">
-        <div class="grow"><b>${esc(d.name)}</b>${d.description ? `<div class="mute">${esc(d.description)}</div>` : ""}
-          <div style="margin-top:4px">${stars(d.rating)}${d.note ? ` <span class="mute">· ${esc(d.note)}</span>` : ""}</div></div>
-        <span class="price">${esc(d.price)}</span></div>`).join("") + `</div>`;
-  });
-  if (!any) html += `<div class="empty">Nothing here yet.</div>`;
-  m.innerHTML = html;
+    if (!ds.length) return ""; any = true;
+    return `<div class="sec-h">${esc(s.name)}</div><div class="list">${ds.map(({d}) => `
+      <button class="dish" onclick="dishSheet('${d.id}')"><div class="grow"><b>${esc(d.name)}</b>${d.description ? `<div class="meta">${esc(d.description)}</div>` : ""}
+        <div style="margin-top:4px">${stars(d.rating)}${(d.tags || []).map((t) => ` <span class="tag ${tagClass(t)}">${esc(t)}</span>`).join("")}</div>
+        ${d.note ? `<div class="meta" style="margin-top:3px">“${esc(d.note)}”</div>` : ""}</div><span class="price">${esc(d.price)}</span></button>`).join("")}</div>`;
+  }).join("");
+  return `<main><div class="top"><button class="back" onclick="go({name:'home'})">‹ Back</button><div class="grow"></div><button class="back" aria-label="Restaurant options" onclick="restMenu()">•••</button></div>
+    <div class="top" style="position:static;padding-top:0"><h1>${esc(r.name)}</h1></div>
+    <div class="chips">${chips.map(([k, l]) => `<button class="chip ${filter === k ? "on" : ""}" onclick="filter='${k}';render()">${l}</button>`).join("")}</div>
+    <div class="pad" style="padding-top:0">${secs}${any ? "" : `<div class="empty">Nothing here yet.</div>`}</div></main>`;
 }
 
-function dishSheet(si, di) {
-  const r = rest(), d = r.sections[si].dishes[di];
-  let rating = d.rating || 0;
-  const el = $("#sheet");
+// ---------- sheets ----------
+function closeSheet() { $("#sheet").innerHTML = ""; }
+function sheet(inner) {
+  $("#sheet").innerHTML = `<div class="sheet" onclick="if(event.target===this)closeSheet()"><div>${inner}</div></div>`;
+}
+function findDish(id) {
+  for (const r of db.restaurants) for (const s of r.sections) for (const d of s.dishes) if (d.id === id) return {r, s, d};
+}
+
+function dishSheet(id) {
+  const {r, s, d} = findDish(id);
+  let rating = d.rating || 0, tags = [...(d.tags || [])], note = d.note || "";
+  const words = ["Tap a star to rate", "Never again", "Meh", "It was fine", "Really good", "Love it"];
   const draw = () => {
-    el.innerHTML = `<div class="sheet" onclick="if(event.target===this)$('#sheet').innerHTML=''"><div>
-      <b style="font-size:20px">${esc(d.name)}</b><div class="mute">${esc(d.description)}</div>
-      <div class="bigstars">${[1,2,3,4,5].map((n) => `<span class="${n <= rating ? "on" : ""}" data-n="${n}">★</span>`).join("")}</div>
-      <label>Notes (what you liked or didn't)</label><textarea id="note" placeholder="e.g. great sauce, a bit salty, order again">${esc(d.note || "")}</textarea>
-      <div class="row" style="margin-top:14px"><button class="danger" id="del">Delete</button><div class="grow"></div>
-        ${d.rating ? `<button class="sec" id="clr">Clear</button>` : ""}<button id="sv">Save</button></div></div></div>`;
-    el.querySelectorAll(".bigstars span").forEach((s) => s.onclick = () => { rating = +s.dataset.n === rating ? 0 : +s.dataset.n; d.note = $("#note").value; draw(); $("#note").value = d.note; });
-    $("#sv").onclick = () => { d.rating = rating; d.note = $("#note").value.trim(); d.tried = d.tried || (rating ? Date.now() : null); save(); el.innerHTML = ""; render(); };
-    const c = $("#clr"); if (c) c.onclick = () => { d.rating = 0; d.tried = null; save(); el.innerHTML = ""; render(); };
-    $("#del").onclick = () => { if (confirm("Delete this dish?")) { r.sections[si].dishes.splice(di, 1); save(); el.innerHTML = ""; render(); } };
+    sheet(`<h4>${esc(d.name)}</h4><div class="meta">${esc(r.name)}${d.description ? " · " + esc(d.description) : ""}</div>
+      <div class="big">${[1,2,3,4,5].map((n) => `<button class="${n <= rating ? "on" : ""}" aria-label="${n} stars" data-n="${n}">★</button>`).join("")}</div>
+      <div class="meta center">${words[rating]}</div>
+      <label for="note">Notes</label><textarea id="note" placeholder="What did you like or not like?">${esc(note)}</textarea>
+      <div class="lbl">Quick tags</div><div class="row" style="flex-wrap:wrap;gap:6px">${QUICK.map((t) => `<button class="chip ${tags.includes(t) ? "on" : ""}" data-t="${t}">${t}</button>`).join("")}</div>
+      <div class="row" style="margin-top:18px"><button class="btn danger" id="del">Delete</button><div class="grow"></div><button class="btn sec" id="clr">Clear</button><button class="btn" id="sv">Save</button></div>`);
+    const keep = () => note = $("#note").value;
+    document.querySelectorAll(".big button").forEach((b) => b.onclick = () => { keep(); rating = +b.dataset.n === rating ? 0 : +b.dataset.n; draw(); });
+    document.querySelectorAll("[data-t]").forEach((b) => b.onclick = () => { keep(); const t = b.dataset.t; tags = tags.includes(t) ? tags.filter((x) => x !== t) : [...tags, t]; draw(); });
+    $("#sv").onclick = () => { keep(); d.rating = rating; d.note = note.trim(); d.tags = tags; if (rating) { d.tried = d.tried || Date.now(); r.visited = Date.now(); } save(); closeSheet(); render(); };
+    $("#clr").onclick = () => { d.rating = 0; d.note = ""; d.tags = []; d.tried = null; save(); closeSheet(); render(); };
+    $("#del").onclick = () => { if (confirm("Delete this dish?")) { s.dishes.splice(s.dishes.indexOf(d), 1); save(); closeSheet(); render(); } };
   };
   draw();
 }
 
 function restMenu() {
-  const r = rest();
-  $("#sheet").innerHTML = `<div class="sheet" onclick="if(event.target===this)this.parentElement.innerHTML=''"><div>
-    <button class="sec" style="width:100%;margin-bottom:8px" onclick="addDish()">＋ Add a dish manually</button>
-    <button class="sec" style="width:100%;margin-bottom:8px" onclick="renameRest()">Rename restaurant</button>
-    <button class="danger" style="width:100%" onclick="delRest()">Delete restaurant</button></div></div>`;
+  sheet(`<button class="btn sec block" style="margin-bottom:8px" onclick="addDish()">＋ Add a dish manually</button>
+    <button class="btn sec block" style="margin-bottom:8px" onclick="renameRest()">Rename restaurant</button>
+    <button class="btn danger block" onclick="delRest()">Delete restaurant</button>`);
 }
 function addDish() {
   const r = rest(); const name = prompt("Dish name?"); if (!name) return;
@@ -154,42 +222,58 @@ function addDish() {
   if (!sec) sec = "Other";
   let s = r.sections.find((x) => x.name.toLowerCase() === sec.toLowerCase());
   if (!s) r.sections.push(s = {name: sec, dishes: []});
-  s.dishes.push({id: uid(), name, description: "", price: "", rating: 0, note: ""});
-  save(); $("#sheet").innerHTML = ""; render();
+  s.dishes.push({id: uid(), name, description: "", price: "", rating: 0, note: "", tags: []});
+  save(); closeSheet(); render();
 }
-function renameRest() { const r = rest(), n = prompt("Restaurant name", r.name); if (n) { r.name = n; save(); $("#sheet").innerHTML = ""; render(); } }
-function delRest() { if (confirm("Delete this restaurant and all its ratings?")) { db.restaurants = db.restaurants.filter((x) => x.id !== view.id); save(); $("#sheet").innerHTML = ""; go({name: "home"}); } }
+function renameRest() { const r = rest(), n = prompt("Restaurant name", r.name); if (n) { r.name = n; save(); closeSheet(); render(); } }
+function delRest() { if (confirm("Delete this restaurant and all its ratings?")) { db.restaurants = db.restaurants.filter((x) => x.id !== view.id); save(); go({name: "home"}); } }
 
 // ---------- add menu ----------
-let draft = {name: "", sections: [], photos: [], status: "", error: ""};
-function addMenu(h, m) {
-  h.innerHTML = `<button class="ghost" onclick="draft={name:'',sections:[],photos:[],status:'',error:''};go({name:'home'})">‹ Cancel</button><h1>Add menu</h1>`;
-  const n = draft.sections.flatMap((s) => s.dishes).length;
-  m.innerHTML = `
-    <label>Restaurant name</label><input id="rn" value="${esc(draft.name)}" placeholder="e.g. Luigi's Trattoria">
-    <label>Menu photos</label>
-    <div class="thumbs">${draft.photos.map((p) => `<img src="data:image/jpeg;base64,${p}">`).join("")}</div>
+function addMenu() {
+  return `<main><div class="top"><button class="back" onclick="resetDraft();go({name:'home'})">‹ Cancel</button></div>
+    <div class="top" style="position:static;padding-top:0"><h1>Scan a menu</h1></div><div class="pad">
+    <label for="rn">Restaurant name</label><input id="rn" value="${esc(draft.name)}" placeholder="e.g. Harbor Oyster Bar">
+    <div class="lbl">Menu photos</div>
+    <div class="thumbs">${draft.photos.map((p) => `<img alt="Menu page" src="data:image/jpeg;base64,${p}">`).join("")}</div>
     <input id="file" type="file" accept="image/*" multiple hidden>
-    <div class="row"><button class="sec grow" id="pick">📷 ${draft.photos.length ? "Add another page" : "Take / choose photo"}</button>
-      ${draft.photos.length ? `<button class="grow" id="scan" ${draft.status ? "disabled" : ""}>${draft.status || "Scan menu"}</button>` : ""}</div>
+    <p class="meta" style="margin:0 0 12px">Add one photo per page. Claude reads every page and merges the sections.</p>
+    <div class="row"><button class="btn sec grow" id="pick">📷 ${draft.photos.length ? "Add another page" : "Take / choose photo"}</button>
+      ${draft.photos.length ? `<button class="btn grow" id="scan" ${draft.status ? "disabled" : ""}>${draft.status || "Scan menu"}</button>` : ""}</div>
+    ${draft.error ? `<div class="err">${esc(draft.error)}</div>` : ""}</div></main>`;
+}
+
+function review() {
+  const n = draft.sections.reduce((a, s) => a + s.dishes.length, 0);
+  return `<main><div class="top"><button class="back" onclick="go({name:'add'})">‹ Back</button></div>
+    <div class="top" style="position:static;padding-top:0"><h1>Found ${n} dishes</h1></div><div class="pad">
+    <p class="meta" style="margin:0 0 4px">Tap ✕ to remove anything misread.</p>
+    <label for="rn">Restaurant name</label><input id="rn" value="${esc(draft.name)}">
     ${draft.error ? `<div class="err">${esc(draft.error)}</div>` : ""}
-    ${n ? `<h2>Found ${n} dishes</h2>` + draft.sections.map((s, si) => `<div class="card"><b>${esc(s.name)}</b>
-        ${s.dishes.map((d, di) => `<div class="row mute" style="padding:4px 0"><div class="grow">${esc(d.name)} <span class="price">${esc(d.price)}</span></div>
-        <button class="ghost" onclick="draft.sections[${si}].dishes.splice(${di},1);render()">✕</button></div>`).join("")}</div>`).join("") +
-      `<button style="width:100%" id="saveMenu">Save menu</button>` : ""}`;
-  $("#rn").oninput = (e) => draft.name = e.target.value;
-  $("#pick").onclick = () => $("#file").click();
-  $("#file").onchange = async (e) => {
-    for (const f of e.target.files) draft.photos.push(await shrink(f));
-    render();
-  };
+    ${draft.sections.map((s, si) => `<div class="sec-h">${esc(s.name)}</div><div class="list">${s.dishes.map((d, di) =>
+      `<div class="found"><div class="grow">${esc(d.name)}${d.description ? `<div class="meta">${esc(d.description)}</div>` : ""}</div><span class="price">${esc(d.price)}</span>
+       <button class="x" aria-label="Remove ${esc(d.name)}" onclick="draft.sections[${si}].dishes.splice(${di},1);render()">✕</button></div>`).join("")}</div>`).join("")}
+    <button class="btn block" style="margin-top:18px" id="saveMenu">Save menu</button></div></main>`;
+}
+
+function bind() {
+  const qi = $("#q");
+  if (qi) qi.oninput = () => { q = qi.value; const pos = qi.selectionStart; render(); const n = $("#q"); n.focus(); n.setSelectionRange(pos, pos); };
+  const rn = $("#rn"); if (rn) rn.oninput = () => draft.name = rn.value;
+  const pick = $("#pick"); if (pick) {
+    pick.onclick = () => $("#file").click();
+    $("#file").onchange = async (e) => {
+      draft.error = "";
+      try { for (const f of e.target.files) draft.photos.push(await shrink(f)); } catch (err) { draft.error = err.message; }
+      render();
+    };
+  }
   const sc = $("#scan"); if (sc) sc.onclick = scanAll;
   const sv = $("#saveMenu"); if (sv) sv.onclick = () => {
     if (!draft.name.trim()) { draft.error = "Enter the restaurant name first."; return render(); }
     const id = uid();
     db.restaurants.push({id, name: draft.name.trim(), created: Date.now(),
-      sections: draft.sections.filter((s) => s.dishes.length).map((s) => ({name: s.name, dishes: s.dishes.map((d) => ({id: uid(), rating: 0, note: "", ...d}))}))});
-    save(); draft = {name: "", sections: [], photos: [], status: "", error: ""}; filter = "all"; go({name: "rest", id});
+      sections: draft.sections.filter((s) => s.dishes.length).map((s) => ({name: s.name, dishes: s.dishes.map((d) => ({id: uid(), rating: 0, note: "", tags: [], description: "", price: "", ...d}))}))});
+    save(); resetDraft(); filter = "all"; go({name: "rest", id});
   };
 }
 
@@ -202,7 +286,7 @@ function shrink(file) { // resize to max 1800px JPEG, return base64
       c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", 0.82).split(",")[1]);
     };
-    img.onerror = () => rej(new Error("Couldn't read photo")); img.src = url;
+    img.onerror = () => rej(new Error("Couldn't read that photo. Try another.")); img.src = url;
   });
 }
 
@@ -222,21 +306,21 @@ async function scanAll() {
         if (ex) ex.dishes.push(...s.dishes); else draft.sections.push(s);
       }
     }
-    if (!draft.sections.length) draft.error = "No dishes found. Try a clearer, closer photo.";
-  } catch (e) { draft.error = e.message; }
-  draft.status = ""; render();
+    draft.status = "";
+    if (!draft.sections.length) { draft.error = "No dishes found. Try a clearer, closer photo."; return render(); }
+    go({name: "review"});
+  } catch (e) { draft.status = ""; draft.error = e.message; render(); }
 }
 
 // ---------- settings / backup ----------
 function settings() {
-  $("#sheet").innerHTML = `<div class="sheet" onclick="if(event.target===this)this.parentElement.innerHTML=''"><div>
-    <b>Backup</b><p class="mute">Ratings live only on this phone. Export a backup file now and then.</p>
-    <button class="sec" style="width:100%;margin-bottom:8px" onclick="exportData()">Export backup</button>
+  sheet(`<h4>Backup</h4><p class="meta">Ratings live only on this phone. Export a backup file now and then.</p>
+    <button class="btn sec block" style="margin-bottom:8px" onclick="exportData()">Export backup</button>
     <input id="imp" type="file" accept="application/json" hidden>
-    <button class="sec" style="width:100%;margin-bottom:8px" onclick="$('#imp').click()">Import backup</button>
-    <button class="sec" style="width:100%" onclick="localStorage.removeItem('mm.pass');alert('Passphrase cleared')">Forget passphrase</button></div></div>`;
+    <button class="btn sec block" style="margin-bottom:8px" onclick="$('#imp').click()">Import backup</button>
+    <button class="btn sec block" onclick="localStorage.removeItem('mm.pass');alert('Passphrase cleared')">Forget passphrase</button>`);
   $("#imp").onchange = async (e) => {
-    try { const d = JSON.parse(await e.target.files[0].text()); if (!Array.isArray(d.restaurants)) throw 0; db = d; save(); $("#sheet").innerHTML = ""; render(); }
+    try { const d = JSON.parse(await e.target.files[0].text()); if (!Array.isArray(d.restaurants)) throw 0; db = d; save(); closeSheet(); render(); }
     catch { alert("That doesn't look like a backup file."); }
   };
 }
